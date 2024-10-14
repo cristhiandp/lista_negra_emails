@@ -12,6 +12,9 @@ phases:
   pre_build:
     commands:
       - pip install -r requirements.txt
+  build:
+    commands:
+      - python -u unittest tests/test_services.py
 
 artifacts:
   files:

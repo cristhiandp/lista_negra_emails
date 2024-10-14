@@ -9,7 +9,7 @@ EMAILS = [
                 'ip': '198.45.45.44',
                 'reason': 'Spamming',
                 'date_created': '2020-01-01T00:00:00Z',
-                'email': 'test@tes.co'
+                'email': 'test@test.co'
             },
             {
                 'app_id': 'e1f019fd-5439-4a23-b55b-7be86206003c',
@@ -26,7 +26,7 @@ class EmailDark(Resource):
 
 class EmailDarkList(Resource):
     def get(self):
-        return EMAILS
+        return EMAILS, 200
     
     def post(self):
         args = parser.parse_args()

@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  post:
+  dark_list:
     build:
       context: .
       # dockerfile: dev-dockerfile
@@ -17,9 +17,9 @@ services:
       - ./src:/app/src
       - ./tests:/app/tests
     depends_on:
-      post_db:
+      dark_list_db:
         condition: service_healthy
-  post_db:
+  dark_list_db:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
