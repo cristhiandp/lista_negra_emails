@@ -8,7 +8,7 @@ class EmailDarkTestCase(unittest.TestCase):
         self.app = Flask(__name__)
         self.api = Api(self.app)
         self.api.add_resource(EmailDark, '/blacklist/<string:email>')
-        self.api.add_resource(EmailDarkList, '/emailblacklists')
+        self.api.add_resource(EmailDarkList, '/blacklist')
         self.client = self.app.test_client()
 
     def test_get_email(self):
