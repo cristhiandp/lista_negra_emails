@@ -3,7 +3,6 @@ version: 0.2
 run-as: Linux-user-name
 
 env:
-  shell: shell-tag
   variables:
     DB_USER: "postgres"
     DB_PASSWORD: "post_123"
@@ -14,7 +13,7 @@ phases:
       - pip install -r requirements.txt
   build:
     commands:
-      - python -u unittest tests/test_services.py
+      - python -m unittest tests/test_services.py
 
 artifacts:
   files:
