@@ -1,11 +1,11 @@
 version: 0.2
 
-run-as: Linux-user-name
+# run-as: Linux-user-name
 
-env:
-  variables:
-    DB_USER: "postgres"
-    DB_PASSWORD: "post_123"
+# env:
+#   variables:
+#     DB_USER: "postgres"
+#     DB_PASSWORD: "post_123"
 
 phases:
   pre_build:
