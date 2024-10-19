@@ -3,13 +3,12 @@ services:
   dark_list:
     build:
       context: .
-      # dockerfile: dev-dockerfile
     environment:
       FLASK_APP: ./src/main.py
       DB_USER: postgres
       DB_PASSWORD: post_123
       DB_NAME: rabbit_commerce
-      DB_HOST: post_db
+      DB_HOST: dark_list_db
       DB_PORT: 5432
     ports:
       - "3000:3000"
