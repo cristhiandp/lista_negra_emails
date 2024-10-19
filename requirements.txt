@@ -5,3 +5,4 @@ flask-marshmallow
 flask-jwt-extended
 Werkzeug
 psycopg2-binary
+coverage

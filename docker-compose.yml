@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   dark_list:
+    container_name: lista_negra_emails
     build:
       context: .
     environment:
