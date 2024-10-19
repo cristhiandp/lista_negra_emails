@@ -33,6 +33,7 @@ class EmailDarkList(Resource):
     @token_required
     def post(self):
         email_data = request.get_json()
+        print("*** 1", email_data)
         email_schema = EmailSchema()
         
         try:
@@ -43,15 +44,18 @@ class EmailDarkList(Resource):
         if Email.query.filter_by(email=email_data['email']).first():
             return {"message": "Solicitud invalida", "email": ["El correo ya existe"]}, 400
         
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        if client_ip and ',' in client_ip:
-            client_ip = client_ip.split(',')[0].strip()
+        browser_ip = email_data.get("ip", None)
+        client_ip = browser_ip 
+        if not browser_ip:
+            client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+            if client_ip and ',' in client_ip:
+                client_ip = client_ip.split(',')[0].strip()
         
         email_obj = Email(
             email=email_data['email'],
-            app_id=email_data['app_id'],
+            app_uuid=email_data['app_uuid'],
             ip=client_ip,
-            reason=email_data.get('reason')
+            blocked_reason=email_data.get('blocked_reason')
         )
 
         db.session.add(email_obj)
