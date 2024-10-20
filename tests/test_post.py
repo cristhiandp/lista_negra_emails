@@ -35,7 +35,7 @@ class TestPost(unittest.TestCase):
         # Enviar una solicitud POST con un email duplicado
         response = self.app.post('/blacklist', json={
             "email": "a@a.com",
-            "app_id": "123"
+            "app_uuid": "123"
         },
         headers={'Authorization': f'Bearer {access_token}'})
 
@@ -54,7 +54,7 @@ class TestPost(unittest.TestCase):
         # Enviar una solicitud POST con datos inválidos
         response = self.app.post('/blacklist', json={
             "email": "not-an-email",
-            "app_id": "123"
+            "app_uuid": "123"
         },
         headers={'Authorization': f'Bearer {access_token}'})
 

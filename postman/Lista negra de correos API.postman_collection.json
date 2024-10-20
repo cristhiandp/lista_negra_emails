@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "40a25e09-3a9a-4def-821f-1e2bf5a34762",
+		"name": "Lista negra de correos API",
+		"description": "---\n\nEste es un microservicio para gestionar la lista negra global de correos de la empresa ya sea consiltar si un emails esta en la lista negra o agregar correos a la lista negra global.\n\n## **Como iniciar**\n\nPara iniciar a trabajar, se necesita que el usuario este autenticado para esto se provee del endpoint `/login` que regresara un token de autentcacion que sera solicitado en los demas endpoins.\n\n### Autenticación\n\nLuego de sonsumir el endpoint de /login este regresata el token de autoirzacion cumploendo los siguientes escenarios:\n\nSi el token no esta en la solicitud o es equivocado o expiro los endpoinds de crear email y consultar correo en la lista negra global regresaran un codigo 401\n\n| Header | Description |\n| --- | --- |\n| `X-RateLimit-Limit` | The maximum number of requests that the consumer is permitted to make per minute. |\n| `X-RateLimit-Remaining` | The number of requests remaining in the current rate limit window. |\n| `X-RateLimit-Reset` | The time at which the current rate limit window resets in UTC epoch seconds. |",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4604238",
+		"_collection_link": "https://www.postman.com/roshi-master/workspace/devops/collection/4604238-40a25e09-3a9a-4def-821f-1e2bf5a34762?action=share&source=collection_link&creator=4604238"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Generar token de autorizacion\", () => {",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"    pm.expect(data.access_token).to.not.be.null;",
+							"    pm.environment.set(\"token\", data.access_token,);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "Este endpoint realiza un solicitud HTTP POST que permite logearse al sistema, es requerido hacerlo para consumir los otros servicios o endpoinds que el sistema de bloqueo de emails tiene\n\nLa Si la solicitud fue exitosa, La respuesta retorna un codigo de estado 200 con un cuerpo application/json con el token generado:\n\n``` json\n{\n    \"access_token\": \"string\"\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "post new email to list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"if(body.email && pm.response.code === 201){",
+							"    pm.environment.set(\"currentEmail\", body.email)",
+							"}",
+							"const response = pm.response.json()",
+							"",
+							"tests[\"Agregar un nuevo email a la lista negra\"] = response.message.includes(\"El correo ha sido bloqueado con éxito\")",
+							"",
+							"pm.test(\"Agregar un nuevo email a la lista negra\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(201);",
+							"\tdata.message.has(\"El correo ha sido bloqueado con éxito\")",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"app_uuid\": \"{{$guid}}\",\r\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get one email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/blacklist/{{currentEmail}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist",
+						"{{currentEmail}}"
+					]
+				},
+				"description": "Este endpoint realiza un solicitud HTTP GET permite saber si un email está en la lista negra global de la organizacion o no, y el motivo por el cual fue agregado a esta.\n\nSi la solicitud fue exitosa, La respuesta retorna un codigo de estado 200 con un cuerpo application/json con un valor boolean indicando si el email consultado esta o no en la lista negra global y el motivo de por que fue agregado.\n\n``` json\n{\n    \"estaEnLaListaNegra\": \"boolean\",\n    \"motivo\": \"string\"\n}\n\n ```"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "currentEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

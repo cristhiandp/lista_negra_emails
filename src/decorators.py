@@ -11,7 +11,8 @@ def token_required(fn):
             return {"message": "Token de autorización faltante o inválido"}, 401
         except InvalidHeaderError:
             return {"message": "Encabezado de autorización inválido"}, 422
-        except Exception:
+        except Exception as e:
+            print("**", e)
             return {"message": "Error al validar el token"}, 500
         return fn(*args, **kwargs)
     return wrapper
