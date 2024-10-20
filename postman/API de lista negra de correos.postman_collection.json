@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "40a25e09-3a9a-4def-821f-1e2bf5a34762",
+		"name": "API de lista negra de correos",
+		"description": "---\n\nEste microservicio gestiona la lista negra global de correos electrónicos de la empresa. Permite consultar si un correo está en la lista negra o agregar nuevos correos a dicha lista.\n\n## Cómo empezar\n\nPara utilizar el servicio, es necesario que el usuario esté autenticado. Se provee el endpoint `/login`, que devolverá un token de autenticación. Este token será requerido en los demás endpoints para autorizar las solicitudes.\n\n### Autenticación (_Bearer Token)_\n\nDespués de consumir el endpoint `/login`, se obtendrá un token de autorización. A continuación, se detallan los escenarios relacionados con la autenticación:\n\n- Si el token no está presente en la solicitud, es incorrecto o ha expirado, los endpoints de creación y consulta de correos en la lista negra devolverán un código **401** (No autorizado).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4604238",
+		"_collection_link": "https://roshi-master.postman.co/workspace/7fb45020-1733-47b1-94a8-bbacedb3a134/collection/4604238-40a25e09-3a9a-4def-821f-1e2bf5a34762?action=share&source=collection_link&creator=4604238"
+	},
+	"item": [
+		{
+			"name": "Agregar correo sin token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email con informacion incompleta\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(401);",
+							"\t\tpm.expect(data.message).to.eql(\"Token de autorización faltante o inválido\")",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"app_uuid\": \"{{$guid}}\",\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al enviar una solicitud sin el token de autenticación tipo Bearer, el sistema no procesará la información solicitada. En su lugar, devolverá un código **401** (No autorizado) acompañado de un mensaje explicativo."
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar un correo sin token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Agregar un nuevo email con informacion incompleta\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(401);",
+							"\tpm.expect(data.message).to.eql(\"Token de autorización faltante o inválido\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/blacklist/{{$randomEmail}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist",
+						"{{$randomEmail}}"
+					]
+				},
+				"description": "Al enviar una solicitud sin el token de autenticación tipo Bearer, el sistema no proporcionará la información solicitada. En su lugar, devolverá un código **401** (No autorizado) junto con un mensaje explicativo."
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Generar token de autorizacion\", () => {",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"    pm.expect(data.access_token).to.not.be.null;",
+							"    pm.environment.set(\"token\", data.access_token,);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				},
+				"description": "Este endpoint realiza una solicitud HTTP POST que permite al usuario autenticarse en el sistema. Es necesario autenticarse para poder consumir los demás servicios o endpoints que ofrece el sistema de bloqueo de correos electrónicos.\n\nSi la solicitud es exitosa, la respuesta devolverá un código de estado **200** y un cuerpo en formato `application/json`, que incluirá el token generado.\n\n``` json\n{\n    \"access_token\": \"string\"\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo, información incompleta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email con informacion incompleta\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(400);",
+							"\t  pm.expect(data.message).to.eql(\"Solicitud invalida\")    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al intentar agregar un correo electrónico a la lista negra de la compañía con campos incompletos en la solicitud, el sistema devolverá un código **400** (Solicitud incorrecta) junto con un mensaje explicativo relacionado con el error."
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo a la lista negra",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"if(body.email && pm.response.code === 201){",
+							"    pm.environment.set(\"currentEmail\", body.email)",
+							"}",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email a la lista negra\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(201);",
+							"\tdata.message.has(\"El correo ha sido bloqueado con éxito\")",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"app_uuid\": \"{{$guid}}\",\r\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al agregar un correo electrónico a la lista negra de la compañía con todos los campos completos en la solicitud, el sistema devolverá un código **200** (Éxito) junto con una respuesta en formato `application/json` que confirmará la operación."
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar un correo que está en la lista negra",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Traer correo ya creado\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"\tdata.email.has(pm.environment.get(\"currentEmail\"))",
+							"    pm.expect(data).to.have.property('app_uuid')",
+							"    pm.expect(data).to.have.property('ip')",
+							"    pm.expect(data).to.have.property('blocked_reason')",
+							"    pm.expect(data).to.have.property('date_created')",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/blacklist/{{currentEmail}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist",
+						"{{currentEmail}}"
+					]
+				},
+				"description": "Este endpoint realiza una solicitud HTTP GET que permite verificar si un correo electrónico está en la lista negra global de la organización y proporciona el motivo por el cual fue añadido.\n\nSi la solicitud es exitosa, la respuesta devolverá un código de estado **200** junto con un cuerpo en formato `application/json`, que incluirá un valor booleano indicando si el correo consultado está o no en la lista negra global, así como el motivo por el cual fue agregado.\n\n``` json\n{\n    \"estaEnLaListaNegra\": \"boolean\",\n    \"motivo\": \"string\"\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar un correo que no está en la lista negra",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Traer correo ya creado\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(404);",
+							"    pm.expect(data.message).to.eql(\"Email not found\")",
+							"    pm.expect(data).to.not.have.property('currentEmail')",
+							"    pm.expect(data).to.not.have.property('app_uuid')",
+							"    pm.expect(data).to.not.have.property('ip')",
+							"    pm.expect(data).to.not.have.property('blocked_reason')",
+							"    pm.expect(data).to.not.have.property('date_created')",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/blacklist/{{$randomEmail}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist",
+						"{{$randomEmail}}"
+					]
+				},
+				"description": "Este endpoint realiza un solicitud HTTP GET enviado en el parametro un email que no ha sido creado"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "currentEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "url",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
