@@ -535,8 +535,6 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"const response = pm.response.json()",
-							"",
 							"pm.test(\"Traer correo ya creado\", () => {    ",
 							"    const data = pm.response.json();",
 							"    pm.expect(pm.response.code).to.eql(404);",
@@ -564,6 +562,41 @@
 					]
 				},
 				"description": "Este endpoint realiza un solicitud HTTP GET enviado en el parametro un email que no ha sido creado"
+			},
+			"response": []
+		},
+		{
+			"name": "health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validar salud del servicio\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"    pm.expect(data).to.have.property('message');",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/health",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Este proceso se encarga de comprobar el estado general del sistema para garantizar que los componentes críticos del microservicio de lista negra de correos estén funcionando correctamente.\n\n`{ \"message\": \"OK\" }`"
 			},
 			"response": []
 		}
