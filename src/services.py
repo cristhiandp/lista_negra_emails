@@ -33,7 +33,6 @@ class EmailDarkList(Resource):
     @token_required
     def post(self):
         email_data = request.get_json()
-        print("*** 1", email_data)
         email_schema = EmailSchema()
         
         try:
