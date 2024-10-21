@@ -108,8 +108,12 @@
 							"    const data = pm.response.json();",
 							"    pm.expect(pm.response.code).to.eql(200);",
 							"    pm.expect(data.access_token).to.not.be.null;",
-							"    pm.environment.set(\"token\", data.access_token,);",
+							"    pm.environment.set(\"token\", data.access_token);",
+							"    pm.collectionVariables.set(\"coll_token\", data.access_token);",
+							"    pm.globals.set(\"glob_token\", data.access_token);",
 							"});",
+							"",
+							"",
 							""
 						],
 						"type": "text/javascript",
@@ -137,7 +141,7 @@
 			"response": []
 		},
 		{
-			"name": "Agregar correo, información incompleta",
+			"name": "Agregar correo, información incompleta (sin id app)",
 			"event": [
 				{
 					"listen": "test",
@@ -146,10 +150,10 @@
 							"const body = JSON.parse(pm.request.body.raw)",
 							"const response = pm.response.json()",
 							"",
-							"pm.test(\"Agregar un nuevo email con informacion incompleta\", () => {    ",
+							"pm.test(\"Agregar un nuevo email con informacion incompleta (sin id app)\", () => {    ",
 							"    const data = pm.response.json();",
 							"    pm.expect(pm.response.code).to.eql(400);",
-							"\t  pm.expect(data.message).to.eql(\"Solicitud invalida\")    ",
+							"\tpm.expect(data.message).to.eql(\"Solicitud invalida\");",
 							"});",
 							""
 						],
@@ -164,6 +168,196 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al intentar agregar un correo electrónico a la lista negra de la compañía con campos incompletos en la solicitud, el sistema devolverá un código **400** (Solicitud incorrecta) junto con un mensaje explicativo relacionado con el error."
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo, información incompleta (sin email)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email con informacion incompleta (sin email)\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(400);",
+							"\tpm.expect(data.message).to.eql(\"Solicitud invalida\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"app_uuid\": \"{{$guid}}\",\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al intentar agregar un correo electrónico a la lista negra de la compañía con campos incompletos en la solicitud, el sistema devolverá un código **400** (Solicitud incorrecta) junto con un mensaje explicativo relacionado con el error."
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo, api id no uuid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email un incorrecto formato para id app\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(400);",
+							"\tpm.expect(data.message).to.eql(\"Solicitud invalida\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"app_uuid\": \"{{$randomWord}}\",\n    \"blocked_reason\": \"{{$randomLoremSentence}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al intentar agregar un correo electrónico a la lista negra de la compañía con campos incompletos en la solicitud, el sistema devolverá un código **400** (Solicitud incorrecta) junto con un mensaje explicativo relacionado con el error."
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo, información incompleta (sin motivo)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = JSON.parse(pm.request.body.raw)",
+							"if(body.email && pm.response.code === 201){",
+							"    pm.environment.set(\"currentEmail\", body.email)",
+							"}",
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Agregar un nuevo email a la lista negra sin motivo\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(201);",
+							"\tdata.message.has(\"El correo ha sido bloqueado con éxito\")",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"app_uuid\": \"{{$guid}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/blacklist",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist"
+					]
+				},
+				"description": "Al intentar agregar un correo electrónico a la lista negra de la compañía con campos incompletos en la solicitud, el sistema devolverá un código **400** (Solicitud incorrecta) junto con un mensaje explicativo relacionado con el error."
+			},
+			"response": []
+		},
+		{
+			"name": "Agregar correo, motivo mayor a 255 caracteres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Agregar un nuevo email con motivo mayor a 255 caracteres\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(400);",
+							"\tpm.expect(data.message).to.eql(\"Solicitud invalida\");",
+							"    ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"app_uuid\": \"{{$guid}}\",\n    \"blocked_reason\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in.\"\n\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -276,6 +470,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{coll_variable_key}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -319,6 +523,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{coll_variable_key}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -329,6 +543,59 @@
 					"path": [
 						"blacklist",
 						"{{$randomEmail}}"
+					]
+				},
+				"description": "Este endpoint realiza un solicitud HTTP GET enviado en el parametro un email que no ha sido creado"
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar un correo con formato invalido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json()",
+							"",
+							"pm.test(\"Traer correo ya creado\", () => {    ",
+							"    const data = pm.response.json();",
+							"    pm.expect(pm.response.code).to.eql(404);",
+							"    pm.expect(data.message).to.eql(\"Email not found\")",
+							"    pm.expect(data).to.not.have.property('currentEmail')",
+							"    pm.expect(data).to.not.have.property('app_uuid')",
+							"    pm.expect(data).to.not.have.property('ip')",
+							"    pm.expect(data).to.not.have.property('blocked_reason')",
+							"    pm.expect(data).to.not.have.property('date_created')",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{coll_variable_key}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/blacklist/{{$randomWord}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"blacklist",
+						"{{$randomWord}}"
 					]
 				},
 				"description": "Este endpoint realiza un solicitud HTTP GET enviado en el parametro un email que no ha sido creado"
@@ -383,6 +650,14 @@
 			"key": "url",
 			"value": "",
 			"type": "default"
+		},
+		{
+			"key": "coll_variable_key",
+			"value": ""
+		},
+		{
+			"key": "coll_token",
+			"value": ""
 		}
 	]
 }
