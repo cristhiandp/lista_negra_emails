@@ -13,6 +13,10 @@ class Login(Resource):
     def post(self):
         access_token = create_access_token(identity="usuario")
         return {"access_token": access_token}, 200
+    
+class Health(Resource):
+    def get(self):
+        return {"message": "OK"}, 200
 
 class EmailDark(Resource):
     @token_required
