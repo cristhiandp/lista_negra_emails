@@ -19,9 +19,14 @@ class EmailDark(Resource):
     def get(self, email):
         email_obj = Email.query.filter_by(email=email).first()
         if email_obj:
-            email_schema = EmailSchema()
-            return email_schema.dump(email_obj), 200
-        return {"message": "Email not found"}, 404
+            return {
+                "is_blocked": True,
+                "blocked_reason": email_obj.blocked_reason
+            }, 200
+        return {
+            "is_blocked": False,
+            "blocked_reason": None
+        }, 404
 
 class EmailDarkList(Resource):
     @token_required
