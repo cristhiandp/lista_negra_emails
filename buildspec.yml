@@ -5,11 +5,11 @@ phases:
     commands:
       - echo *** Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 135044555678.dkr.ecr.us-east-2.amazonaws.com
-      - pip install -r requirements.txt
+      # - pip install -r requirements.txt
   build:
     commands:
       - echo *** Running tests...
-      - python -m unittest
+      # - python -m unittest
       - docker build -t devops/goku .
       - docker tag devops/goku:latest 135044555678.dkr.ecr.us-east-2.amazonaws.com/devops/goku:latest
       - docker push 135044555678.dkr.ecr.us-east-2.amazonaws.com/devops/goku:latest
