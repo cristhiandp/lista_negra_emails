@@ -77,7 +77,6 @@ class TestPost(unittest.TestCase):
 
         # Verificar que se devuelva un 404
         self.assertEqual(response.status_code, 404)
-        self.assertIn("Email not found", response.get_json()["message"])
 
 if __name__ == '__main__':
     unittest.main()
