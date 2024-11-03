@@ -16,7 +16,7 @@ class Login(Resource):
     
 class Health(Resource):
     def get(self):
-        return {"message": "OK"}, 200
+        return { "message": "OK" }, 200
 
 class EmailDark(Resource):
     @token_required
