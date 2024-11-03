@@ -16,7 +16,7 @@ RUN chown -R user-app:user-app /app
 USER user-app
 
 # Expone el puerto 8000 para la aplicación
-EXPOSE 3000
+EXPOSE 5000
 
 # Comando para iniciar la aplicación
-CMD ["flask", "run", "--host", "0.0.0.0", "--port", "3000", "--reload"]
+CMD ["flask", "run", "--host", "0.0.0.0", "--port", "5000", "--reload"]
