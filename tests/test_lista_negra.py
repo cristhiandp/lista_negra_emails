@@ -8,6 +8,7 @@ from marshmallow import ValidationError
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
+# test
 class TestPost(unittest.TestCase):
     def setUp(self):
         app.config['Testing'] = True
