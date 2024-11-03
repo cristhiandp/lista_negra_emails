@@ -9,8 +9,8 @@ phases:
   build:
     commands:
       - echo *** Running tests...
-      # - python -m unittest
       - docker build -t devops/goku .
+      - docker run devops/goku python -m unittest
       - docker tag devops/goku:latest 135044555678.dkr.ecr.us-east-2.amazonaws.com/devops/goku:latest
       - docker push 135044555678.dkr.ecr.us-east-2.amazonaws.com/devops/goku:latest
 
