@@ -1,0 +1,22 @@
+{
+  "executionRoleArn": "arn:aws:iam::135044555678:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "containerPort": 5000,
+          "protocol": "tcp"
+        }
+      ],
+      "name": "container-black-list",
+      "essential": true,
+      "image": "<IMAGE1_NAME>"
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "family": "task_app_black_email_list"
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "TargetService": {
+        "Type": "AWS::ECS::Service",
+        "Properties": {
+          "TaskDefinition": "<TASK_DEFINITION>",
+          "LoadBalancerInfo": {
+            "ContainerName": "container-black-list",
+            "ContainerPort": 5000
+          }
+        }
+      }
+    }
+  ]
+}
