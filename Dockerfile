@@ -16,10 +16,6 @@ RUN chown -R user-app:user-app /app
 USER user-app
 
 ENV FLASK_APP=./src/main.py
-ENV DB_USER=postgres
-ENV DB_PASSWORD=post_123
-ENV DB_NAME=rabbit_commerce
-ENV DB_HOST=dark_list_db
 ENV DB_PORT=5432
 
 # Expone el puerto 8000 para la aplicación
