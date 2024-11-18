@@ -15,7 +15,7 @@ RUN groupadd -r user-app && useradd -r -g user-app -d /app user-app
 RUN chown -R user-app:user-app /app
 USER user-app
 
-ENV FLASK_APP=./src/main.py
+ENV FLASK_APP="./src/main.py"
 ENV DB_PORT=5432
 
 # Expone el puerto 8000 para la aplicación
