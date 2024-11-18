@@ -5,7 +5,7 @@
       "TargetService": {
         "Type": "AWS::ECS::Service",
         "Properties": {
-          "TaskDefinition": "<TASK_DEFINITION>",
+          "TaskDefinition": "arn:aws:ecs:us-east-2:135044555678:task-definition/task_app_black_email_list:6",
           "LoadBalancerInfo": {
             "ContainerName": "container-black-list",
             "ContainerPort": 5000
