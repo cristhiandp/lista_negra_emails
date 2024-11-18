@@ -17,6 +17,6 @@
   "requiresCompatibilities": ["FARGATE"],
   "networkMode": "awsvpc",
   "cpu": "1024",
-  "memory": "3072",
+  "memory": "2048",
   "family": "task_app_black_email_list"
 }
