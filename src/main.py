@@ -12,6 +12,7 @@ jwt = JWTManager(app)
 
 init_db(app)
 
+# routes
 api.add_resource(EmailDarkList, '/blacklist')
 api.add_resource(EmailDark, '/blacklist/<email>')
 api.add_resource(Login, '/login')
